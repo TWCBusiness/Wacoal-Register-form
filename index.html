@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wacoal Member Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <style>
+        :root {
+            --primary-pink: #d6006e;
+            --light-pink: #ffebf5;
+            --gradient-bg: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-image: var(--gradient-bg);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        .container {
+            background: var(--white);
+            width: 100%; max-width: 500px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(214, 0, 110, 0.15);
+            overflow: hidden;
+            border-top: 8px solid var(--primary-pink);
+        }
+
+        .header { padding: 30px; text-align: center; }
+        .header h1 { color: var(--primary-pink); margin: 0; font-size: 24px; }
+
+        form { padding: 0 30px 30px 30px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 500; }
+        
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 25px; box-sizing: border-box; font-family: 'Prompt';
+        }
+
+        /* PDPA Box */
+        .pdpa-box {
+            background: #fff0f6; border: 1px solid #ffcce0;
+            padding: 15px; border-radius: 15px; font-size: 12px;
+        }
+        .pdpa-content {
+            height: 60px; overflow-y: auto; background: #fff;
+            padding: 8px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;
+        }
+
+        .consent-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .consent-wrapper input { width: 18px; height: 18px; accent-color: var(--primary-pink); }
+
+        button {
+            width: 100%; padding: 15px;
+            background: linear-gradient(45deg, var(--primary-pink), #ff4d9e);
+            color: white; border: none; border-radius: 25px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-top: 20px; transition: 0.3s;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        #success-msg { display: none; text-align: center; padding: 50px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="success-msg">
+            <h3 style="color:var(--primary-pink)">ลงทะเบียนสำเร็จ</h3>
+            <p>ข้อมูลของคุณถูกบันทึกเรียบร้อยแล้ว</p>
+            <button onclick="liff.closeWindow()">ปิดหน้าต่าง</button>
+        </div>
+
+        <div id="form-container">
+            <div class="header">
+                <h1>Register Member</h1>
+                <p style="font-size: 12px; color: #888;">กรุณากรอกข้อมูลให้ครบถ้วน</p>
+            </div>
+
+            <form action="https://docs.google.com/forms/d/e/1FAIpQLSdFSkvFQSz7N1bhZsjT1aP4mx8WSc5-jJ-eiz6NuSM4Ev6YkA/formResponse" 
+                  method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+
+                <input type="hidden" name="entry.806847352" id="line_id_field">
+
+                <div class="form-group">
+                    <label>ชื่อ-นามสกุล</label>
+                    <input type="text" name="entry.1764410611" required>
+                </div>
+
+                <div class="form-group">
+                    <label>เบอร์โทรศัพท์</label>
+                    <input type="tel" name="entry.243482877" required pattern="[0-9]*" inputmode="numeric">
+                </div>
+
+                <div class="form-group">
+                    <label>อีเมล</label>
+                    <input type="email" name="entry.1244006011" required>
+                </div>
+
+                <div class="form-group">
+                    <label>เพศ</label>
+                    <select name="entry.2104894204" required>
+                        <option value="" disabled selected>เลือกเพศ</option>
+                        <option value="ชาย">ชาย</option>
+                        <option value="หญิง">หญิง</option>
+                        <option value="LGBTQ+">LGBTQ+</option>
+                        <option value="ไม่ระบุเพศ">ไม่ระบุเพศ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>วันเกิด</label>
+                    <input type="date" name="entry.1729983716" required>
+                </div>
+
+                <div class="form-group">
+                    <label>สาขา</label>
+                    <select name="entry.2075808339" required>
+                        <option value="สำนักงานใหญ่">สำนักงานใหญ่</option>
+                        <option value="งานแฟร์...">งานแฟร์</option>
+                    </select>
+                </div>
+
+                <div class="pdpa-box" style="border: 1px solid #e0e0e0; background-color: #f9f9f9; padding: 20px; border-radius: 12px; margin-top: 15px;">
+    <div style="font-weight: 700; font-size: 14px; color: #333; margin-bottom: 10px; border-bottom: 1px solid #d6006e; display: inline-block; padding-bottom: 2px;">
+        การให้ความยินยอมในการประมวลผลข้อมูลส่วนบุคคล
+    </div>
+    
+    <div class="pdpa-content" style="height: 120px; font-size: 11.5px; color: #555; line-height: 1.7; text-align: justify; border: 1px solid #eee; padding: 12px; background: #fff; border-radius: 8px; overflow-y: scroll; margin-bottom: 15px;">
+        บริษัท ไทยวาโก้ จำกัด (มหาชน) (“บริษัทฯ”) ให้ความสำคัญอย่างยิ่งในการคุ้มครองข้อมูลส่วนบุคคลของท่าน 
+        ข้าพเจ้าในฐานะเจ้าของข้อมูลส่วนบุคคล ให้ความยินยอมแก่บริษัทฯ ในการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคลของข้าพเจ้า 
+        รวมถึงข้อมูลที่ระบุในแบบฟอร์มลงทะเบียนนี้ เพื่อวัตถุประสงค์ดังต่อไปนี้:
+        <br><br>
+        1. เพื่อการบริหารจัดการสมาชิก การตรวจสอบตัวตน และการให้บริการหลังการขายที่เกี่ยวข้องกับผลิตภัณฑ์ของบริษัทฯ<br>
+        2. เพื่อการแจ้งข้อมูลข่าวสารทางการตลาด สิทธิประโยชน์ ประชาสัมพันธ์กิจกรรมส่งเสริมการขาย โปรโมชั่น และการแนะนำผลิตภัณฑ์ที่เหมาะสมกับท่าน<br>
+        3. เพื่อการศึกษาวิจัย การจัดทำข้อมูลสถิติ และการวิเคราะห์พฤติกรรมผู้บริโภค เพื่อนำมาพัฒนาและปรับปรุงมาตรฐานการบริการของบริษัทฯ ให้ดียิ่งขึ้น
+        <br><br>
+        ท่านมีสิทธิในการเข้าถึง แก้ไข ลบ คัดค้าน หรือถอนความยินยอมในการประมวลผลข้อมูลส่วนบุคคลของท่านได้ตามที่กฎหมายกำหนด 
+        ทั้งนี้ การถอนความยินยอมอาจส่งผลกระทบต่อสิทธิประโยชน์หรือความสะดวกในการรับบริการจากทางบริษัทฯ 
+        ท่านสามารถศึกษารายละเอียดเพิ่มเติมได้ที่ <a href="https://www.wacoal.co.th" target="_blank" style="color: #d6006e; text-decoration: none; font-weight: 500;">นโยบายคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy)</a> ของบริษัทฯ
+    </div>
+
+    <div style="margin-top: 15px;">
+        <label class="consent-wrapper" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" id="pdpa_check" name="entry.199803635" value="ยินยอม" onchange="toggleSubmit()" style="margin-top: 4px; transform: scale(1.2);">
+            <span style="font-size: 13px; line-height: 1.5; color: #333; font-weight: 500;">
+                ข้าพเจ้าได้อ่านและทำความเข้าใจรายละเอียดข้างต้นแล้ว และตกลงให้ความยินยอมแก่บริษัทฯ ในการประมวลผลข้อมูลส่วนบุคคลของข้าพเจ้าตามวัตถุประสงค์ที่ระบุไว้
+            </span>
+        </label>
+    </div>
+</div>
+
+                <button type="submit" id="submit_btn" disabled>ยืนยันข้อมูล</button>
+            </form>
+        </div>
+    </div>
+
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){showSuccess();}"></iframe>
+
+    <script>
+        var submitted = false;
+
+        // 1. ฟังก์ชันควบคุมปุ่ม Submit (ต้องกดยินยอมเท่านั้น)
+        function toggleSubmit() {
+            const checkbox = document.getElementById('pdpa_check');
+            const btn = document.getElementById('submit_btn');
+            btn.disabled = !checkbox.checked;
+        }
+
+        // 2. ฟังก์ชัน LIFF สำหรับดึงข้อมูล LINE อัตโนมัติ
+        async function main() {
+            await liff.init({ liffId: "https://liff.line.me/2008993053-zdStgsKn" }); // ใส่ LIFF ID ของคุณที่นี่
+            if (liff.isLoggedIn()) {
+                const profile = await liff.getProfile();
+                // นำค่า userId หรือ displayName มาใส่ใน Hidden Field
+                document.getElementById('line_id_field').value = profile.userId; 
+            } else {
+                liff.login();
+            }
+        }
+        main();
+
+        function showSuccess() {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
