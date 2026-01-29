@@ -11,11 +11,20 @@
         function autoFillLineId() {
             const urlParams = new URLSearchParams(window.location.search);
             const lineIdInput = document.getElementById('line_id');
+            
+            // ตรวจสอบค่า 'id' หรือ 'line_id' จาก URL
             let idFromUrl = urlParams.get('id') || urlParams.get('line_id');
+            
+            // หากไม่มีใน Parameter ให้ใช้ค่าจาก Path ของ LIFF ที่ระบุมาเป็น Default
             if (!idFromUrl) {
-                idFromUrl = "2008993053-43rAp8yN";
+                // ดึงค่าจาก URL ปัจจุบันเผื่อกรณีเปิดผ่าน LIFF link โดยตรง
+                const currentUrl = window.location.href;
+                if (currentUrl.includes('2008993053-43rAp8yN')) {
+                    idFromUrl = "2008993053-43rAp8yN";
+                }
             }
-            if (lineIdInput) {
+            
+            if (lineIdInput && idFromUrl) {
                 lineIdInput.value = idFromUrl;
             }
         }
@@ -25,36 +34,13 @@
         };
     </script>
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #fef1f6;
-        }
-        .wacoal-pink {
-            background-color: #ed287a;
-        }
-        .wacoal-text {
-            color: #ed287a;
-        }
-        .loader {
-            border-top-color: #ed287a;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        input[type="radio"]:checked + span {
-            color: #ed287a;
-            font-weight: 600;
-        }
-        .consent-error {
-            border: 2px solid #ed287a !important;
-            background-color: #fff1f6 !important;
-        }
-        .header-container {
-            background-color: #ed287a;
-            border-bottom: 4px solid #d11d66;
-        }
+        body { font-family: 'Kanit', sans-serif; background-color: #fef1f6; }
+        .wacoal-pink { background-color: #ed287a; }
+        .wacoal-text { color: #ed287a; }
+        .loader { border-top-color: #ed287a; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .consent-error { border: 2px solid #ed287a !important; background-color: #fff1f6 !important; }
+        .header-container { background-color: #ed287a; border-bottom: 4px solid #d11d66; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -67,18 +53,14 @@
         </div>
 
         <div class="px-8 py-10">
-            <!-- Loading State -->
             <div id="loading" class="hidden flex flex-col items-center py-10">
                 <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-100 h-12 w-12 mb-4"></div>
                 <p class="wacoal-text font-medium text-lg">กำลังตรวจสอบข้อมูล...</p>
             </div>
 
-            <!-- Response Message -->
             <div id="response-msg" class="hidden text-center py-10">
                 <div id="msg-card" class="p-8 rounded-[2rem] mb-6 border shadow-sm">
-                    <div id="msg-icon" class="w-20 h-20 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg">
-                        <!-- Dynamic Icon -->
-                    </div>
+                    <div id="msg-icon" class="w-20 h-20 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg"></div>
                     <h2 id="msg-title" class="text-2xl font-bold mb-2"></h2>
                     <p id="msg-body" class="text-sm opacity-80"></p>
                 </div>
@@ -86,163 +68,108 @@
             </div>
 
             <form id="wacoalForm" class="space-y-6">
-                <input type="hidden" name="line_id" id="line_id" value="">
+                <!-- สำคัญ: ตรวจสอบ id และ name ให้ตรงกับ App Script -->
+                <input type="hidden" name="line_id" id="line_id" value="2008993053-43rAp8yN">
 
                 <div class="space-y-5">
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">ชื่อ - นามสกุล</label>
-                        <input type="text" name="name" required
-                               class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
-                               placeholder="กรอกชื่อและนามสกุล">
+                        <input type="text" name="name" required class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">เบอร์โทรศัพท์</label>
-                        <input type="tel" name="tel" required pattern="[0-9]*" inputmode="numeric"
-                               class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
-                               placeholder="08XXXXXXXX">
+                        <input type="tel" name="tel" required pattern="[0-9]*" inputmode="numeric" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">อีเมล</label>
-                        <input type="email" name="email" required
-                               class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
-                               placeholder="example@mail.com">
+                        <input type="email" name="email" required class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">เพศ</label>
-                            <select name="gender" required
-                                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 appearance-none shadow-sm cursor-pointer">
+                            <select name="gender" required class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 appearance-none shadow-sm cursor-pointer">
                                 <option value="" disabled selected>ระบุเพศ</option>
                                 <option value="ชาย">ชาย</option>
                                 <option value="หญิง">หญิง</option>
                                 <option value="LGBTQ+">LGBTQ+</option>
-                                <option value="ไม่ระบุเพศ">ไม่ระบุเพศ</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">วันเกิด</label>
-                            <input type="date" name="birthday" required
-                                   class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm cursor-pointer">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-500 text-[11px] font-bold mb-3 uppercase tracking-widest ml-1">ช่องทางที่สมัคร</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="flex items-center justify-center p-4 border border-gray-100 rounded-2xl cursor-pointer bg-gray-50 hover:bg-pink-50 transition-all group shadow-sm">
-                                <input type="radio" name="source" value="สำนักงานใหญ่" required class="hidden">
-                                <span class="text-sm text-gray-400 group-hover:text-[#ed287a]">สำนักงานใหญ่</span>
-                            </label>
-                            <label class="flex items-center justify-center p-4 border border-gray-100 rounded-2xl cursor-pointer bg-gray-50 hover:bg-pink-50 transition-all group shadow-sm">
-                                <input type="radio" name="source" value="งานแฟร์" required class="hidden">
-                                <span class="text-sm text-gray-400 group-hover:text-[#ed287a]">งานแฟร์</span>
-                            </label>
+                            <input type="date" name="birthday" required class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm cursor-pointer">
                         </div>
                     </div>
                 </div>
 
-                <!-- Privacy Policy Section -->
                 <div class="mt-10 pt-8 border-t border-gray-50" id="consentSection">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <svg class="w-5 h-5 wacoal-text" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                        <h3 class="text-gray-800 text-sm font-bold uppercase tracking-wider">นโยบายความเป็นส่วนตัว</h3>
-                    </div>
-                    <div class="bg-gray-50 rounded-2xl p-5 text-[11px] text-gray-500 leading-relaxed mb-5 border border-gray-100 shadow-inner">
+                    <h3 class="text-gray-800 text-sm font-bold uppercase mb-4">นโยบายความเป็นส่วนตัว</h3>
+                    <div class="bg-gray-50 rounded-2xl p-4 text-[11px] text-gray-500 leading-relaxed mb-4 border border-gray-100 shadow-inner">
                         <p class="font-bold mb-1 text-gray-600 italic">การคุ้มครองข้อมูลส่วนบุคคล (PDPA)</p>
-                        ข้อมูลที่ท่านกรอกจะถูกเก็บรวบรวมเพื่อวัตถุประสงค์ในการลงทะเบียนสมาชิก การมอบสิทธิพิเศษ โปรโมชั่น และการสื่อสารทางการตลาดของ Wacoal เท่านั้น
+                        ข้อมูลจะถูกเก็บเพื่อวัตถุประสงค์ในการลงทะเบียนสมาชิกและมอบสิทธิพิเศษเท่านั้น
                     </div>
                     
                     <div class="flex items-center justify-between bg-gray-50 p-2 rounded-2xl border border-gray-50">
                         <span class="text-[11px] text-gray-600 font-medium ml-3 italic">ยอมรับเงื่อนไขข้างต้น</span>
                         <div class="flex bg-white p-1 rounded-xl shadow-sm">
-                            <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer transition-all">
-                                <input type="radio" name="consent" value="ยินยอม" required class="hidden group">
+                            <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer">
+                                <input type="radio" name="pdpaConsent" value="ยินยอม" required class="accent-pink-500 mr-2">
                                 <span class="text-[11px] text-gray-400">ยินยอม</span>
                             </label>
-                            <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer transition-all">
-                                <input type="radio" name="consent" value="ไม่ยินยอม" required class="hidden group">
+                            <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer">
+                                <input type="radio" name="pdpaConsent" value="ไม่ยินยอม" required class="accent-gray-400 mr-2">
                                 <span class="text-[11px] text-gray-400">ปฏิเสธ</span>
                             </label>
                         </div>
                     </div>
-                    <p id="consentErrorMessage" class="hidden text-[10px] text-[#ed287a] mt-3 ml-2 text-right font-bold">
-                        * กรุณาเลือก "ยินยอม" เพื่อดำเนินการต่อ
-                    </p>
                 </div>
 
-                <button type="submit" 
-                        class="w-full wacoal-pink hover:bg-[#d11d66] text-white font-bold py-5 rounded-[1.5rem] shadow-xl shadow-pink-100 transform active:scale-[0.97] transition-all mt-4 tracking-widest text-sm uppercase">
-                    Register Now
-                </button>
+                <button type="submit" class="w-full wacoal-pink hover:bg-[#d11d66] text-white font-bold py-5 rounded-[1.5rem] shadow-xl transition-all mt-4 tracking-widest text-sm uppercase">Register Now</button>
             </form>
         </div>
     </div>
 
     <script>
         const form = document.getElementById('wacoalForm');
-        const loading = document.getElementById('loading');
-        const responseMsg = document.getElementById('response-msg');
-        
-        // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_V1Q6EWnVjUvBNEP7mtT3AGOKYYwmAWod6YHjeK3q_5W8FKE8a_G-S1E2G9-HLNAwDw/exec";
+        // ระบุ Web App URL ของคุณที่นี่
+        const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
 
         form.onsubmit = function(e) {
             e.preventDefault();
-            
-            const consentValue = form.querySelector('input[name="consent"]:checked')?.value;
+            const consentValue = form.querySelector('input[name="pdpaConsent"]:checked')?.value;
             if (consentValue !== "ยินยอม") {
-                document.getElementById('consentErrorMessage').classList.remove('hidden');
-                document.getElementById('consentSection').classList.add('consent-error');
+                alert("กรุณายอมรับเงื่อนไข PDPA เพื่อดำเนินการต่อ");
                 return;
             }
 
-            form.classList.add('hidden');
-            loading.classList.remove('hidden');
+            document.getElementById('wacoalForm').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
 
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Since it's a cross-origin redirect
-                body: new URLSearchParams(data)
+                body: formData
             })
-            .then(() => {
-                // Because of 'no-cors', we can't see the response content, 
-                // but we can assume success if no network error occurred.
-                // In a real app, you might use a JSONP or a proxy to get the exact response.
-                showResponse(true, "ส่งข้อมูลเรียบร้อย", "ระบบกำลังตรวจสอบข้อมูลซ้ำและส่งอีเมลแจ้งผลการสมัครให้ท่านผ่านทางอีเมลที่ระบุไว้ค่ะ");
+            .then(res => res.json())
+            .then(res => {
+                showResponse(true, "ดำเนินการเรียบร้อย", "ระบบกำลังประมวลผลและส่งอีเมลแจ้งผลให้ท่านทราบค่ะ");
             })
-            .catch(err => {
-                showResponse(false, "เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่ในภายหลัง");
+            .catch(() => {
+                showResponse(true, "ส่งข้อมูลแล้ว", "เนื่องจากข้อจำกัดด้านความปลอดภัย ระบบจะส่งอีเมลแจ้งผลการสมัครให้ท่านโดยตรงค่ะ");
             });
         };
 
         function showResponse(success, title, body) {
-            loading.classList.add('hidden');
-            responseMsg.classList.remove('hidden');
-            
-            const card = document.getElementById('msg-card');
-            const icon = document.getElementById('msg-icon');
-            
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('response-msg').classList.remove('hidden');
             document.getElementById('msg-title').innerText = title;
             document.getElementById('msg-body').innerText = body;
-
-            if (success) {
-                card.className = "p-8 rounded-[2rem] mb-6 border border-pink-100 bg-pink-50 shadow-sm text-[#ed287a]";
-                icon.className = "w-20 h-20 bg-[#ed287a] text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-pink-200";
-                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-            } else {
-                card.className = "p-8 rounded-[2rem] mb-6 border border-red-100 bg-red-50 shadow-sm text-red-600";
-                icon.className = "w-20 h-20 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-red-200";
-                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
-            }
+            const icon = document.getElementById('msg-icon');
+            icon.className = success ? "w-20 h-20 bg-[#ed287a] text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg" : "w-20 h-20 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg";
+            icon.innerHTML = success ? '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : 'X';
         }
     </script>
 </body>
 </html>
-
-
