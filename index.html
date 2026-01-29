@@ -6,33 +6,39 @@
     <title>Wacoal Member Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เพิ่ม LIFF SDK ของ LINE -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         /**
-         * ดึงข้อมูล Line ID จาก URL
+         * ดึงข้อมูล Line ID จริง (User ID) จาก LIFF SDK
          */
-        function autoFillLineId() {
-            const urlParams = new URLSearchParams(window.location.search);
+        async function initializeLiff() {
             const lineIdInput = document.getElementById('line_id');
             
-            // ดึงค่าจาก parameter เช่น ?id=... หรือ ?line_id=...
-            let idValue = urlParams.get('id') || urlParams.get('line_id');
-            
-            if (!idValue) {
-                // หากไม่มี parameter ให้ตรวจสอบจาก URL ว่าเปิดผ่าน LIFF หรือไม่
-                const currentUrl = window.location.href;
-                if (currentUrl.includes('2008993053-43rAp8yN')) {
-                    idValue = "2008993053-43rAp8yN";
+            try {
+                // เริ่มต้นการใช้งาน LIFF ด้วย LIFF ID ของคุณ
+                await liff.init({ liffId: "2008993053-43rAp8yN" });
+
+                if (liff.isLoggedIn()) {
+                    // ดึงโปรไฟล์เพื่อหา User ID จริง (UID)
+                    const profile = await liff.getProfile();
+                    if (lineIdInput) {
+                        lineIdInput.value = profile.userId; // จะได้ค่าที่ขึ้นต้นด้วย U...
+                    }
                 } else {
-                    idValue = "Direct Web";
+                    // หากยังไม่ได้ Login ให้สั่ง Login (หรือข้ามไปหากต้องการให้กรอกแบบ Web ทั่วไป)
+                    liff.login();
                 }
-            }
-            
-            if (lineIdInput) {
-                lineIdInput.value = idValue;
+            } catch (err) {
+                console.error('LIFF Error:', err);
+                // กรณีเกิดข้อผิดพลาด ให้ใส่ค่าสำรองเพื่อให้ทราบว่าเป็น Direct Web
+                if (lineIdInput && !lineIdInput.value) {
+                    lineIdInput.value = "Direct Web / Error";
+                }
             }
         }
 
-        window.onload = autoFillLineId;
+        window.onload = initializeLiff;
     </script>
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #fef1f6; }
@@ -68,7 +74,7 @@
             </div>
 
             <form id="wacoalForm" class="space-y-6">
-                <!-- ฟิลด์ซ่อนสำหรับ Line ID -->
+                <!-- ฟิลด์ซ่อนสำหรับ Line ID (UID) -->
                 <input type="hidden" name="line_id" id="line_id" value="">
 
                 <div class="space-y-5">
@@ -149,7 +155,7 @@
     <script>
         const form = document.getElementById('wacoalForm');
         // ระบุ Web App URL ของคุณที่นี่
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZI8_Zis_bwsq8-91X1NemPbMhWb6zGAjQyaJIkinM8gct4nY6dYwNRe-aqmUs4olRbA/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3NRgbzVKED_1GvACCIehaWNR3WpkNi5hzJI3dSQwluFk9EZVXvoWyGMsTMSZrIftxsw/exec";
 
         form.onsubmit = function(e) {
             e.preventDefault();
