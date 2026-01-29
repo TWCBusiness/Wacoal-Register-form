@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<script>
+  async function main() {
+    await liff.init({ liffId: "2008993053-43rAp8yN" });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      const profile = await liff.getProfile();
+      document.getElementById('line_id').value = profile.userId;
+    }
+  }
+  main();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacoal Member Registration</title>
@@ -204,3 +219,4 @@
     </script>
 </body>
 </html>
+
