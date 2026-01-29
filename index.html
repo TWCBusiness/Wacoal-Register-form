@@ -7,31 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script>
-        var submitted = false;
-        
-        function handleIframeLoad() {
-            if (submitted) {
-                if (typeof showSuccess === 'function') {
-                    showSuccess();
-                } else {
-                    setTimeout(showSuccess, 100);
-                }
-            }
-        }
-
         // Function to extract line_id from LIFF URL or Query Parameters
         function autoFillLineId() {
             const urlParams = new URLSearchParams(window.location.search);
             const lineIdInput = document.getElementById('line_id');
-            
-            // Try to get 'id' or 'line_id' from URL query
             let idFromUrl = urlParams.get('id') || urlParams.get('line_id');
-            
-            // If no ID in URL, use the default from the LIFF app ID provided
             if (!idFromUrl) {
                 idFromUrl = "2008993053-43rAp8yN";
             }
-            
             if (lineIdInput) {
                 lineIdInput.value = idFromUrl;
             }
@@ -46,7 +29,6 @@
             font-family: 'Kanit', sans-serif;
             background-color: #fef1f6;
         }
-        /* Wacoal Brand Color */
         .wacoal-pink {
             background-color: #ed287a;
         }
@@ -61,10 +43,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .hidden-iframe {
-            display: none;
-        }
-        /* Custom UI Enhancements */
         input[type="radio"]:checked + span {
             color: #ed287a;
             font-weight: 600;
@@ -82,67 +60,60 @@
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-pink-100 my-8">
-        <!-- Header Section (Logo Removed) -->
         <div class="header-container p-8 text-center relative">
             <h1 class="text-white text-2xl font-bold tracking-widest uppercase mb-1">Register Member</h1>
             <div class="h-1 w-12 bg-white mx-auto rounded-full opacity-50 mb-3"></div>
             <p class="text-pink-100 font-light text-xs tracking-wide">สิทธิพิเศษสำหรับสมาชิกรอคุณอยู่</p>
         </div>
 
-        <!-- Form Body -->
         <div class="px-8 py-10">
             <!-- Loading State -->
             <div id="loading" class="hidden flex flex-col items-center py-10">
                 <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-100 h-12 w-12 mb-4"></div>
-                <p class="wacoal-text font-medium text-lg">กำลังประมวลผลข้อมูล...</p>
+                <p class="wacoal-text font-medium text-lg">กำลังตรวจสอบข้อมูล...</p>
             </div>
 
-            <!-- Success Message -->
-            <div id="success-msg" class="hidden text-center py-10">
-                <div class="bg-pink-50 text-[#ed287a] p-8 rounded-[2rem] mb-6 border border-pink-100 shadow-sm">
-                    <div class="w-20 h-20 bg-[#ed287a] text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-pink-200">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <!-- Response Message -->
+            <div id="response-msg" class="hidden text-center py-10">
+                <div id="msg-card" class="p-8 rounded-[2rem] mb-6 border shadow-sm">
+                    <div id="msg-icon" class="w-20 h-20 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg">
+                        <!-- Dynamic Icon -->
                     </div>
-                    <h2 class="text-2xl font-bold mb-2">ลงทะเบียนสำเร็จ</h2>
-                    <p class="text-sm opacity-80">เราได้รับข้อมูลของคุณเรียบร้อยแล้ว<br>ยินดีต้อนรับเข้าสู่ครอบครัว Wacoal ค่ะ</p>
+                    <h2 id="msg-title" class="text-2xl font-bold mb-2"></h2>
+                    <p id="msg-body" class="text-sm opacity-80"></p>
                 </div>
                 <button onclick="window.location.reload()" class="text-sm font-semibold wacoal-text hover:opacity-80 transition-opacity">กลับไปหน้าเริ่มต้น</button>
             </div>
 
-            <form id="wacoalForm" target="hidden_iframe" class="space-y-6">
-                <!-- Hidden Line ID field: Updated to handle LIFF ID -->
-                <input type="hidden" name="entry.1221197775" id="line_id" value="2008993053-43rAp8yN">
+            <form id="wacoalForm" class="space-y-6">
+                <input type="hidden" name="line_id" id="line_id" value="">
 
                 <div class="space-y-5">
-                    <!-- ชื่อ-นามสกุล -->
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">ชื่อ - นามสกุล</label>
-                        <input type="text" name="entry.680654636" required
+                        <input type="text" name="name" required
                                class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
                                placeholder="กรอกชื่อและนามสกุล">
                     </div>
 
-                    <!-- เบอร์โทร -->
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">เบอร์โทรศัพท์</label>
-                        <input type="tel" name="entry.724628224" required pattern="[0-9]*" inputmode="numeric"
+                        <input type="tel" name="tel" required pattern="[0-9]*" inputmode="numeric"
                                class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
                                placeholder="08XXXXXXXX">
                     </div>
 
-                    <!-- อีเมล -->
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">อีเมล</label>
-                        <input type="email" name="entry.1691349091" required
+                        <input type="email" name="email" required
                                class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm"
                                placeholder="example@mail.com">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <!-- เพศ -->
                         <div>
                             <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">เพศ</label>
-                            <select name="entry.1983084799" required
+                            <select name="gender" required
                                     class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 appearance-none shadow-sm cursor-pointer">
                                 <option value="" disabled selected>ระบุเพศ</option>
                                 <option value="ชาย">ชาย</option>
@@ -151,24 +122,22 @@
                                 <option value="ไม่ระบุเพศ">ไม่ระบุเพศ</option>
                             </select>
                         </div>
-                        <!-- วันเกิด -->
                         <div>
                             <label class="block text-gray-500 text-[11px] font-bold mb-1.5 uppercase tracking-widest ml-1">วันเกิด</label>
-                            <input type="date" name="entry.1505315570" required
+                            <input type="date" name="birthday" required
                                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-100 focus:border-[#ed287a] transition-all text-gray-800 shadow-sm cursor-pointer">
                         </div>
                     </div>
 
-                    <!-- สาขา -->
                     <div>
                         <label class="block text-gray-500 text-[11px] font-bold mb-3 uppercase tracking-widest ml-1">ช่องทางที่สมัคร</label>
                         <div class="grid grid-cols-2 gap-4">
                             <label class="flex items-center justify-center p-4 border border-gray-100 rounded-2xl cursor-pointer bg-gray-50 hover:bg-pink-50 transition-all group shadow-sm">
-                                <input type="radio" name="entry.454992923" value="สำนักงานใหญ่" required class="hidden">
+                                <input type="radio" name="source" value="สำนักงานใหญ่" required class="hidden">
                                 <span class="text-sm text-gray-400 group-hover:text-[#ed287a]">สำนักงานใหญ่</span>
                             </label>
                             <label class="flex items-center justify-center p-4 border border-gray-100 rounded-2xl cursor-pointer bg-gray-50 hover:bg-pink-50 transition-all group shadow-sm">
-                                <input type="radio" name="entry.454992923" value="งานแฟร์" required class="hidden">
+                                <input type="radio" name="source" value="งานแฟร์" required class="hidden">
                                 <span class="text-sm text-gray-400 group-hover:text-[#ed287a]">งานแฟร์</span>
                             </label>
                         </div>
@@ -183,18 +152,18 @@
                     </div>
                     <div class="bg-gray-50 rounded-2xl p-5 text-[11px] text-gray-500 leading-relaxed mb-5 border border-gray-100 shadow-inner">
                         <p class="font-bold mb-1 text-gray-600 italic">การคุ้มครองข้อมูลส่วนบุคคล (PDPA)</p>
-                        ข้อมูลที่ท่านกรอกจะถูกเก็บรวบรวมเพื่อวัตถุประสงค์ในการลงทะเบียนสมาชิก การมอบสิทธิพิเศษ โปรโมชั่น และการสื่อสารทางการตลาดของ Wacoal เท่านั้น เรามุ่งมั่นที่จะรักษาข้อมูลของท่านให้ปลอดภัยตามมาตรฐานสากล
+                        ข้อมูลที่ท่านกรอกจะถูกเก็บรวบรวมเพื่อวัตถุประสงค์ในการลงทะเบียนสมาชิก การมอบสิทธิพิเศษ โปรโมชั่น และการสื่อสารทางการตลาดของ Wacoal เท่านั้น
                     </div>
                     
                     <div class="flex items-center justify-between bg-gray-50 p-2 rounded-2xl border border-gray-50">
                         <span class="text-[11px] text-gray-600 font-medium ml-3 italic">ยอมรับเงื่อนไขข้างต้น</span>
                         <div class="flex bg-white p-1 rounded-xl shadow-sm">
                             <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer transition-all">
-                                <input type="radio" name="entry.607490332" value="ยินยอม" required class="hidden group">
+                                <input type="radio" name="consent" value="ยินยอม" required class="hidden group">
                                 <span class="text-[11px] text-gray-400">ยินยอม</span>
                             </label>
                             <label class="flex items-center px-4 py-2 rounded-lg cursor-pointer transition-all">
-                                <input type="radio" name="entry.607490332" value="ไม่ยินยอม" required class="hidden group">
+                                <input type="radio" name="consent" value="ไม่ยินยอม" required class="hidden group">
                                 <span class="text-[11px] text-gray-400">ปฏิเสธ</span>
                             </label>
                         </div>
@@ -212,48 +181,66 @@
         </div>
     </div>
 
-    <iframe name="hidden_iframe" id="hidden_iframe" class="hidden-iframe" onload="handleIframeLoad()"></iframe>
-
     <script>
         const form = document.getElementById('wacoalForm');
         const loading = document.getElementById('loading');
-        const successMsg = document.getElementById('success-msg');
-        const consentError = document.getElementById('consentErrorMessage');
-        const consentSection = document.getElementById('consentSection');
-
-        const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScnExBo20TfP9sc7BZJXjNELF85abTmQM-2CJgf004Y-OjhDg/formResponse";
+        const responseMsg = document.getElementById('response-msg');
+        
+        // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+        const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
 
         form.onsubmit = function(e) {
-            const consentValue = form.querySelector('input[name="entry.607490332"]:checked')?.value;
-
+            e.preventDefault();
+            
+            const consentValue = form.querySelector('input[name="consent"]:checked')?.value;
             if (consentValue !== "ยินยอม") {
-                e.preventDefault();
-                consentError.classList.remove('hidden');
-                consentSection.classList.add('consent-error');
-                consentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return false;
+                document.getElementById('consentErrorMessage').classList.remove('hidden');
+                document.getElementById('consentSection').classList.add('consent-error');
+                return;
             }
 
-            submitted = true;
-            form.action = GOOGLE_FORM_ACTION;
             form.classList.add('hidden');
             loading.classList.remove('hidden');
-            consentError.classList.add('hidden');
-            consentSection.classList.remove('consent-error');
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Since it's a cross-origin redirect
+                body: new URLSearchParams(data)
+            })
+            .then(() => {
+                // Because of 'no-cors', we can't see the response content, 
+                // but we can assume success if no network error occurred.
+                // In a real app, you might use a JSONP or a proxy to get the exact response.
+                showResponse(true, "ส่งข้อมูลเรียบร้อย", "ระบบกำลังตรวจสอบข้อมูลซ้ำและส่งอีเมลแจ้งผลการสมัครให้ท่านผ่านทางอีเมลที่ระบุไว้ค่ะ");
+            })
+            .catch(err => {
+                showResponse(false, "เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่ในภายหลัง");
+            });
         };
 
-        function showSuccess() {
-            if (loading) loading.classList.add('hidden');
-            if (successMsg) successMsg.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        function showResponse(success, title, body) {
+            loading.classList.add('hidden');
+            responseMsg.classList.remove('hidden');
+            
+            const card = document.getElementById('msg-card');
+            const icon = document.getElementById('msg-icon');
+            
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-body').innerText = body;
 
-        form.querySelectorAll('input[name="entry.607490332"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                consentError.classList.add('hidden');
-                consentSection.classList.remove('consent-error');
-            });
-        });
+            if (success) {
+                card.className = "p-8 rounded-[2rem] mb-6 border border-pink-100 bg-pink-50 shadow-sm text-[#ed287a]";
+                icon.className = "w-20 h-20 bg-[#ed287a] text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-pink-200";
+                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            } else {
+                card.className = "p-8 rounded-[2rem] mb-6 border border-red-100 bg-red-50 shadow-sm text-red-600";
+                icon.className = "w-20 h-20 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-red-200";
+                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            }
+        }
     </script>
 </body>
 </html>
